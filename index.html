@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoramento</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+        }
+        .progress {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            
+        }
+        .inner {
+            width: 0%;
+            height: 5px;
+            background: red; 
+            animation: progressbar linear;
+        }
+        .iframe {
+            height: 100vh;
+        }
+        @keyframes progressbar {
+            5% { width: 0%; }
+            95% { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <iframe id="content" class="iframe" width="100%" frameborder="0"></iframe>
+        <div class="progress" />
+    </div>
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        var progressbarInstance;
+        var autoScrollSeconds = 10;
+        var index = 0;
+        var sites = [
+            "http://google.com/",
+            "http://youtube.com/",
+        ]
+
+        const initProgressbar = () => {
+            let x = document.createElement('div');
+            x.classList.add('inner');
+            x.style.animationDuration = autoScrollSeconds + "s";
+            document.querySelector('.progress').appendChild(x);
+
+            return window.setInterval(function () {
+                if (document.querySelector('.progress>.inner')) {
+                    document.querySelector('.progress>.inner').remove();
+                }
+                let x = document.createElement('div');
+                x.classList.add('inner');
+                x.style.animationDuration = autoScrollSeconds + "s";
+                document.querySelector('.progress').appendChild(x);
+
+                resetProgressbar();
+            }, autoScrollSeconds * 1000);
+
+        }
+
+        const resetProgressbar = () => {
+            setSite();
+            window.clearInterval(progressbarInstance);
+            if (document.querySelector('.progress>.inner')) {
+                document.querySelector('.progress>.inner').remove();
+            }
+            progressbarInstance = initProgressbar();
+        }
+
+        const setSite = () => {
+            document.getElementById('content').src = sites[index];
+
+            if(index === sites.length - 1) {
+                index = 0;
+            } else {
+                index++;
+            }
+        }
+
+        const init = () => {
+            setSite()
+            progressbarInstance = initProgressbar();
+        }
+
+        window.addEventListener('load', init);
+    });
+</script>
+</html>
